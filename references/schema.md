@@ -10,7 +10,7 @@
 
 `verified=true` 仅表示当前条目已与明确的版本化游戏内说明核对，不表示实战机制完全无误。若战斗规则、自动施法或隐藏优先级仍不明，相关字段保持空并让核验器阻断推演。
 
-`official_skills_snapshot.json` 是兼容现有构建器的本地技能卡接口名称，不限定提供者。顶层含 `heroes` 对象和可选的 `fetched_at_utc`、`content_version`、`version_note`。`heroes[正式名]` 含 `hero_id` 与 `skills[技能ID]`；每项技能变体含 `awake`（0 或 1）及 `data`，后者含 `name`、`consume_val`、`normaldesc`、`desc`（逐级说明数组）、可选 `extra_skills` 和 `effect_tips`。构建器在用户确认满级觉醒模式后选觉醒版本，逐级应用描述，后级同一效果数值覆盖前级。`wiki_skill_glossary.json` 同样只是兼容接口名称，顶层含 `heroes[式神名][技能名]` 的状态词释义候选数组；关联失败或不唯一时写入 `evidence_gaps`。数字效果 ID 不得凭空解释。所有内容由使用者本地提供，来源与适用版本应写入各记录的元数据。
+`official_skills_snapshot.json` 是兼容现有构建器的本地技能卡接口名称，不限定提供者。顶层含 `heroes` 对象和可选的 `fetched_at_utc`、`content_version`、`version_note`。`heroes[正式名]` 含 `hero_id` 与 `skills[技能ID]`；每项技能变体含 `awake`（0 或 1）及 `data`，后者含 `name`、`consume_val`、`normaldesc`、`desc`（逐级说明数组）、可选 `extra_skills` 和 `effect_tips`。构建器在用户确认满级觉醒模式后选觉醒版本，逐级应用描述，后级同一效果数值覆盖前级。`wiki_skill_glossary.json` 同样只是兼容接口名称，顶层含 `heroes[式神名][技能名]` 的状态词释义候选数组；关联失败或不唯一时写入 `evidence_gaps`。数字效果 ID 不得凭空解释。推演前须将所用资料整理为本地文件，来源与适用版本应写入各记录的元数据。
 
 `community_soul_snapshot.json` 顶层含 `souls[御魂名]`，每项保存 `set1`、`set2`、`set4` 中适用的字段；有 `set1` 而无 `set4` 的记录按首领御魂处理。`community_ai_snapshot.json` 顶层含 `heroes[式神名]` 的自动战斗规则候选。两个文件名仅用于兼容现有接口，不指定来源；缺规则不等于必定普攻。`duel_rules.json` 分开保存用户确认与未确认规则。只有与当前版本核对的记录才能在 `catalog.json` 中设 `verified=true`。
 
