@@ -1,0 +1,9 @@
+{
+  "workers": [
+    {"api_base": "https://YOUR_PROVIDER/v1", "api_key_env": "YYS_PANEL_API_KEY", "model": "YOUR_CHEAP_MODEL_1", "max_tokens": 12000},
+    {"api_base": "https://YOUR_PROVIDER/v1", "api_key_env": "YYS_PANEL_API_KEY", "model": "YOUR_CHEAP_MODEL_2", "max_tokens": 12000},
+    {"api_base": "https://YOUR_PROVIDER/v1", "api_key_env": "YYS_PANEL_API_KEY", "model": "YOUR_CHEAP_MODEL_3", "max_tokens": 12000},
+    {"api_base": "https://YOUR_PROVIDER/v1", "api_key_env": "YYS_PANEL_API_KEY", "model": "YOUR_CHEAP_MODEL_4", "max_tokens": 12000},
+    {"api_base": "https://YOUR_PROVIDER/v1", "api_key_env": "YYS_PANEL_API_KEY", "model": "YOUR_CHEAP_MODEL_5", "max_tokens": 12000}
+  ]
+}

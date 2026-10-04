@@ -1,0 +1,23 @@
+{
+  "scope": "公开版默认机制候选；每名使用者须在本地 duel_rules.json 或本轮 rule_overrides 明确确认适用的规则与资料快照。",
+  "user_confirmed": {},
+  "not_confirmed_by_user": {
+    "initial_fire_gauge_position": "未确认",
+    "fifth_gauge_step_exact_settlement_point": "资料对‘第五个普通回合结束’与‘下个普通回合开始’的表述不同；在影响技能可用性时保留分支，不能提前使用尚未结算的鬼火",
+    "duel_mode_fire_gauge_exceptions": "特殊活动修正及技能/御魂改变鬼火条的例外需逐局核对",
+    "tie_break_and_simultaneous_trigger_order": "未确认",
+    "auto_battle_skill_toggle_and_target_priority": "已收录的社区 AI 表按用户确认作为默认行为；未记载的技能开关、条件及同优先级并列目标仍需分支",
+    "special_event_modifiers": "逐轮核对",
+    "mode_and_source_confirmation": "满级、觉醒、技能等级、初始鬼火、是否有阴阳师、当前资料是否与客户端一致，以及是否接受社区 AI 表，均待使用者确认。"
+  },
+  "community_rule_candidates": {
+    "fire_gauge": "每方独立鬼火条，标准长度5格；普通回合推进，填满一轮依次回3、4、5火，第三轮以后均回5火。5是进度格数，不是每轮固定回火量；额外回合通常不额外推进，技能和御魂可改变进度或单独产火。标准机制有资料支持，但本期竞猜客户端仍须服从实际界面和本轮例外。",
+    "normal_fire_cap": "通常最多储存8火；具体技能改变上限时按技能文案覆盖",
+    "action_order": "速度决定行动条推进；拉条、推条、新回合和先机可改变后续顺序"
+  },
+  "baseline_assumed": {
+    "auto_skill": "火量足够且技能可用时，将妖术列为候选；否则将普攻列为候选。具体技能和目标未知时必须分支。",
+    "status": "baseline_assumed"
+  },
+  "source_pages": {}
+}
