@@ -7,6 +7,8 @@ description: 读取阴阳师对弈竞猜的本轮红蓝面板，核验式神、�
 
 本 Skill 只处理本轮截图与使用者提供的本地资料。它不获取第三方文案或图片，不指定外部资料来源；不以猜测填补缺失技能、御魂或 AI 行为。首次运行按 [README.md](README.md) 安装并运行 `python scripts/bootstrap_data.py`，它不会联网。用户可以通过 `--source-dir` 导入自己有权使用的资料；数据格式见 [schema.md](references/schema.md)。
 
+运行下列相对路径命令前，先定位本文件 `SKILL.md` 所在的 Skill 根目录，并将命令的工作目录设为该目录；用户的当前项目目录可能不同。截图和输出路径则按实际位置传入，避免把相对路径误认为相对用户项目。
+
 ## 本轮截图
 
 使用本轮两张不同的红蓝截图运行 `python scripts/start_match.py 红图 蓝图 --runs-dir runs`。检查生成的 `match.json` 和 `soul_review.html`：逐格核对十名式神、八项数值、十个御魂图案。没有本地头像或匹配置信度不足时，御魂保持待确认，请使用者根据原图确认，并标为 `soul_status: user_confirmed`。OCR 名称未命中本地词表时，确认正式名称并标为 `name_status: confirmed`。修正后运行 `python scripts/verify_match.py match.json --intake-only`。不要借用历史轮次的阵容、结果或确认。

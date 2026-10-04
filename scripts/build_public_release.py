@@ -8,7 +8,8 @@ from zipfile import ZipFile, ZIP_DEFLATED
 ROOT = Path(__file__).resolve().parents[1]
 FILES = (
     ".gitignore", "LICENSE", "README.md", "requirements.txt", "SKILL.md",
-    "THIRD_PARTY_NOTICES.md",
+    "THIRD_PARTY_NOTICES.md", "docs/releasing.md",
+    "examples/synthetic_demo.py",
     "references/ai_target_observations.json",
     "references/battle_protocol.md", "references/catalog.json",
     "references/combat_background.md", "references/duel_rules.example.json",
