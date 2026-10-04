@@ -5,7 +5,7 @@ import argparse
 from pathlib import Path
 import cv2
 import numpy as np
-from fast_read import COL_X, REF_W, REF_H, SOUL_Y, load_image, soul_crop_id
+from fast_read import crop_box, load_image, soul_crop_id
 
 ROOT = Path(__file__).resolve().parents[1]
 DEST = ROOT / "assets" / "screen_soul_templates"
@@ -25,18 +25,16 @@ def main():
             if not any(entry.get("soul_status") == "user_confirmed" for entry in team):
                 continue
             image = load_image(Path(data["screenshots"][side]))
-            sx, sy = image.shape[1] / REF_W, image.shape[0] / REF_H
-            radius = round(34 * (sx + sy) / 2)
             for index, entry in enumerate(team):
                 if entry.get("soul_status") != "user_confirmed":
                     continue
-                if not entry.get("soul_name") or soul_crop_id(image, COL_X[index]) != entry.get("soul_icon_id"):
+                box = entry.get("soul_crop_box")
+                if not entry.get("soul_name") or not box or soul_crop_id(image, box) != entry.get("soul_icon_id"):
                     raise ValueError(f"Confirmed icon does not match its screenshot: {fixture} {side}-{index+1}")
-                cx, cy = round((COL_X[index] - 8) * sx), round(SOUL_Y * sy)
-                crop = image[cy-radius:cy+radius, cx-radius:cx+radius]
+                crop = crop_box(image, box)
                 name = entry["soul_name"]
                 # The asset contains only the icon and a label, never a prior lineup.
-                path = DEST / f"{name}__{soul_crop_id(image, COL_X[index])}.png"
+                path = DEST / f"{name}__{soul_crop_id(image, box)}.png"
                 if not path.exists():
                     cv2.imencode(".png", crop)[1].tofile(str(path))
                     added += 1

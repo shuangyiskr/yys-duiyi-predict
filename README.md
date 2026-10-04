@@ -83,7 +83,7 @@ my-data/
 .\.venv\Scripts\python scripts/start_match.py 红方.png 蓝方.png --runs-dir runs
 ```
 
-它生成本轮 `match.json` 和 `soul_review.html`。先核对十名式神、八项面板和十个御魂；未确认项修正 `match.json` 并保留原图指纹，随后执行：
+它根据截图中的表格行名和五列数值定位，不限制整张截图的宽高比例；表格不清晰或无法定位时会要求核对。它生成本轮 `match.json` 和 `soul_review.html`。先核对十名式神、八项面板和十个御魂；未确认项修正 `match.json`，保留原图坐标 `soul_crop_box` 和图案指纹，随后执行：
 
 ```powershell
 .\.venv\Scripts\python scripts/verify_match.py runs/本轮目录/match.json --intake-only

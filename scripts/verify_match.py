@@ -3,7 +3,7 @@
 import argparse
 import json
 from pathlib import Path
-from fast_read import COL_X, load_image, soul_crop_id
+from fast_read import load_image, soul_crop_id
 
 STATS = ("attack", "hp", "defense", "speed", "crit", "crit_damage", "effect_hit", "effect_resist")
 SKILL_FIELDS = ("name", "description", "triggers", "conditions", "effects", "auto_ai", "limits")
@@ -59,8 +59,13 @@ def check(match, catalog, intake_only=False):
                 candidates = unit.get("soul_candidates") or []
                 if not candidates or candidates[0].get("name") != soul_name:
                     issues.append(f"{label}: 御魂名称与图案首选候选不一致")
-            if image is not None and icon_id != soul_crop_id(image, COL_X[index-1]):
-                issues.append(f"{label}: 图案指纹与本轮截图不一致")
+            if image is not None:
+                try:
+                    matches_crop = icon_id == soul_crop_id(image, unit.get("soul_crop_box"))
+                except (TypeError, ValueError):
+                    matches_crop = False
+                if not matches_crop:
+                    issues.append(f"{label}: 图案裁切范围或指纹与本轮截图不一致")
             if name and not intake_only:
                 entry = catalog.get("shikigami", {}).get(name)
                 if not entry or not entry.get("verified") or entry.get("version") != match.get("game_version") or not entry.get("source"):

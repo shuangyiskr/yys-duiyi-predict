@@ -2,7 +2,7 @@
 
 ## 对局文件
 
-顶层：`run_id`、`captured_at_utc`、`game_version`、`screenshots`、`teams.red`、`teams.blue`、可选 `rule_overrides`。每轮必须从本轮红蓝截图生成新的 `run_id`；历史对局 JSON 不可直接用于新一轮。每队恰好五名式神。每名含 `name`、`stats`、`soul_icon_id`、`soul_name`、`soul_status`、`soul_candidates`。`stats` 需有 `attack,hp,defense,speed,crit,crit_damage,effect_hit,effect_resist` 八个非负数；百分数以 75 表示 75%。`soul_name` 未核实时必须为 `null`，禁止写猜测。`soul_icon_id` 是本轮截图图案裁图的独立指纹，不等于御魂名称。自动识别时第一候选必须与 `soul_name` 一致；人工确认需标 `soul_status: user_confirmed`。非精确 OCR 姓名需人工确认并标 `name_status: confirmed`，解决对应问题后方可从 `issues` 移除。若本轮用户明确给出与常规模式不同的规则，写入 `rule_overrides.user_confirmed`，例如 `{"onmyoji_participation":"双方有阴阳师参战"}`；构建器只对本轮覆盖默认值，不回写通用规则库。
+顶层：`run_id`、`captured_at_utc`、`game_version`、`screenshots`、`teams.red`、`teams.blue`、可选 `rule_overrides`。每轮必须从本轮红蓝截图生成新的 `run_id`；历史对局 JSON 不可直接用于新一轮。每队恰好五名式神。每名含 `name`、`stats`、`soul_icon_id`、`soul_crop_box`、`soul_name`、`soul_status`、`soul_candidates`。`stats` 需有 `attack,hp,defense,speed,crit,crit_damage,effect_hit,effect_resist` 八个非负数；百分数以 75 表示 75%。`soul_name` 未核实时必须为 `null`，禁止写猜测。`soul_crop_box` 是原图坐标 `[左,上,右,下]`，识别、复核和指纹校验须使用同一裁图；`soul_icon_id` 是该裁图的独立指纹，不等于御魂名称。自动识别时第一候选必须与 `soul_name` 一致；人工确认需标 `soul_status: user_confirmed`。非精确 OCR 姓名需人工确认并标 `name_status: confirmed`，解决对应问题后方可从 `issues` 移除。若本轮用户明确给出与常规模式不同的规则，写入 `rule_overrides.user_confirmed`，例如 `{"onmyoji_participation":"双方有阴阳师参战"}`；构建器只对本轮覆盖默认值，不回写通用规则库。
 
 ## 机制目录
 

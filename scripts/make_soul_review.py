@@ -9,7 +9,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from fast_read import COL_X, REF_W, REF_H, SOUL_Y, load_image
+from fast_read import crop_box, load_image
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -35,11 +35,8 @@ def build(match):
     rows = []
     for side in ("red", "blue"):
         image = load_image(Path(match["screenshots"][side]))
-        sx, sy = image.shape[1] / REF_W, image.shape[0] / REF_H
         for index, unit in enumerate(match["teams"][side]):
-            cx, cy = round((COL_X[index] - 8) * sx), round(SOUL_Y * sy)
-            radius = round(34 * (sx + sy) / 2)
-            crop = image[cy-radius:cy+radius, cx-radius:cx+radius]
+            crop = crop_box(image, unit["soul_crop_box"])
             soul = unit.get("soul_name")
             art, art_label = reference(soul)
             effects = snapshot["souls"].get(soul, {})

@@ -29,9 +29,11 @@ def main():
     run_dir = args.runs_dir.resolve() / run_name
     run_dir.mkdir(parents=True, exist_ok=False)
     match_file = run_dir / "match.json"
-    subprocess.run([sys.executable, str(ROOT / "scripts" / "fast_read.py"),
-                    str(red), str(blue), "--out", str(match_file)],
-                   check=True, capture_output=True, text=True)
+    read_result = subprocess.run([sys.executable, str(ROOT / "scripts" / "fast_read.py"),
+                                  str(red), str(blue), "--out", str(match_file)],
+                                 capture_output=True, text=True)
+    if read_result.returncode:
+        parser.error(read_result.stderr.strip() or "截图表格识别失败，请核对阵容详情截图")
     match = json.loads(match_file.read_text(encoding="utf-8"))
     match["rule_overrides"] = {}
     match_file.write_text(json.dumps(match, ensure_ascii=False, indent=2), encoding="utf-8")

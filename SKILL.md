@@ -11,7 +11,7 @@ description: 读取阴阳师对弈竞猜的本轮红蓝面板，核验式神、�
 
 ## 本轮截图
 
-使用本轮两张不同的红蓝截图运行 `python scripts/start_match.py 红图 蓝图 --runs-dir runs`。检查生成的 `match.json` 和 `soul_review.html`：逐格核对十名式神、八项数值、十个御魂图案。没有本地头像或匹配置信度不足时，御魂保持待确认，请使用者根据原图确认，并标为 `soul_status: user_confirmed`。OCR 名称未命中本地词表时，确认正式名称并标为 `name_status: confirmed`。修正后运行 `python scripts/verify_match.py match.json --intake-only`。不要借用历史轮次的阵容、结果或确认。
+使用本轮两张不同的红蓝截图运行 `python scripts/start_match.py 红图 蓝图 --runs-dir runs`。读取器依据表格行名和五列数值定位，不要求整张截图具有固定比例；定位失败时报告截图问题并请使用者核对，不套用其他设备的坐标。检查生成的 `match.json` 和 `soul_review.html`：逐格核对十名式神、八项数值、十个御魂图案。没有本地头像或匹配置信度不足时，御魂保持待确认，请使用者根据原图确认，并标为 `soul_status: user_confirmed`。OCR 名称未命中本地词表时，确认正式名称并标为 `name_status: confirmed`。修正后运行 `python scripts/verify_match.py match.json --intake-only`。不要借用历史轮次的阵容、结果或确认。
 
 ## 本地资料与规则
 

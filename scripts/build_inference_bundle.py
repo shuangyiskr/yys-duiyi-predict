@@ -4,7 +4,7 @@ import argparse
 from copy import deepcopy
 import json
 from pathlib import Path
-from fast_read import COL_X, load_image, soul_crop_id
+from fast_read import load_image, soul_crop_id
 from ai_targeting import build_targeting_audit
 from source_fingerprints import fingerprint
 
@@ -102,7 +102,8 @@ def build(match, ai_snapshot, catalog, official, soul_snapshot, duel_rules,
             if (not name or not soul or not unit.get("soul_icon_id")
                     or unit.get("name_status") in {"raw_ocr_unverified", "ambiguous", "missing"}
                     or soul_status not in {"screen_template_high_confidence", "portrait_high_confidence", "user_confirmed"}
-                    or unit.get("soul_icon_id") != soul_crop_id(screenshot_image, COL_X[index])
+                    or not unit.get("soul_crop_box")
+                    or unit.get("soul_icon_id") != soul_crop_id(screenshot_image, unit["soul_crop_box"])
                     or (soul_status != "user_confirmed" and
                         (not candidates or candidates[0].get("name") != soul))
                     or (soul_status == "portrait_high_confidence" and not
