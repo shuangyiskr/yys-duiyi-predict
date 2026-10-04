@@ -39,7 +39,7 @@ python -m venv .venv
 
 ## 先试一个虚构演示
 
-在仓库目录运行 `python examples/synthetic_demo.py`。它只用虚构式神、技能和御魂，生成一份推演包和一张弃权票据，并用项目的票据校验器检查结构与鬼火账。命令会打印两个输出文件的临时路径、`ballot_valid: true` 和 `prediction: abstain`；无需安装 OCR 依赖，也不会联网。
+在仓库目录运行 `python examples/synthetic_demo.py`。它只用虚构式神、技能和御魂，生成一份推演包和一张弃权票据，并用项目的票据校验器检查结构与鬼火账。命令会打印两个输出文件的临时路径、资料缺口数，以及 `ballot_valid: true`、`invalid_fire_ballot_blocked: true` 和 `prediction: abstain`；无需安装 OCR 依赖，也不会联网。
 
 这个演示帮助检查推演包与票据流程，**没有演示截图识别，也不能给出真实对局预测**。真实对局仍需完成下面的资料导入、截图逐格核对和机制核实。
 

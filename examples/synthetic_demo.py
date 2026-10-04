@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Run a fictional packet and ballot check without game data or network access."""
 import json
+from copy import deepcopy
 from pathlib import Path
 import sys
 from tempfile import mkdtemp
@@ -46,7 +47,8 @@ def main():
             "normal_fire_refill_amount_by_completed_cycle": [3, 4, 5]}},
         "ai_precedence": ["demo_only"], "ai_targeting_audit": {},
         "evidence_status": {"standard_duel_mode_user_confirmed": True},
-        "missing": [], "evidence_gaps": ["虚构示例不含真实自动战斗规则；不能预测胜负"],
+        "missing": ["虚构示例没有真实游戏资料；不能预测胜负"],
+        "evidence_gaps": ["虚构示例不含真实自动战斗规则"],
         "battle_background": "虚构演示", "battle_protocol": "虚构演示",
         "source_pages": {}
     }
@@ -67,12 +69,19 @@ def main():
     errors = check(packet, ballot)
     if errors:
         raise RuntimeError(f"synthetic ballot failed validation: {errors}")
+    invalid_ballot = deepcopy(ballot)
+    invalid_ballot["key_actions"][0]["fire_after"] = 5
+    invalid_errors = check(packet, invalid_ballot)
+    if not any("fire_after does not balance" in error for error in invalid_errors):
+        raise RuntimeError("unbalanced fire ledger was not rejected")
     out_dir = Path(mkdtemp(prefix="yys-synthetic-demo-"))
     for name, value in (("reasoning_packet.json", packet), ("ballot.json", ballot)):
         (out_dir / name).write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n",
                                     encoding="utf-8")
     print(json.dumps({"demo": "fictional", "packet": str(out_dir / "reasoning_packet.json"),
                       "ballot": str(out_dir / "ballot.json"), "ballot_valid": True,
+                      "missing_count": len(packet["missing"]),
+                      "invalid_fire_ballot_blocked": True,
                       "prediction": "abstain", "network_access": False}, ensure_ascii=False, indent=2))
 
 
