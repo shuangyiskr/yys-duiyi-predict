@@ -16,12 +16,12 @@ def fixture_bundle():
         return {"slot": 1, "name": name, "stats": {"speed": speed, "hp": 10000},
                 "soul": "测试御魂", "input_evidence": {"name_status": "confirmed", "soul_status": "user_confirmed"}}
     def skill(name):
-        return {"netease_website_text": {"hero_id": name, "cards": [{
+        return {"skill_text_record": {"hero_id": name, "cards": [{
             "skill_id": "123", "name": "测试技能", "awake": 1, "cost": 3,
             "base_description": "群体攻击", "level_descriptions": ["5级伤害提高"],
             "effect_tip_ids": [], "extra_skills": [], "other_api_fields": {}}]},
             "wiki_skill_effect_expansions": {}, "community_ai_candidate": {"rules": []}}
-    return {"schema_version": 2, "run_id": "this-round", "teams": {
+    return {"schema_version": 3, "run_id": "this-round", "teams": {
         "red": [unit("red", "甲", 200)], "blue": [unit("blue", "乙", 180)]},
         "skills_and_ai": {"甲": skill("甲"), "乙": skill("乙")},
         "souls": {"测试御魂": {"web_candidate": {"mechanics": {"set4": "测试效果"}}}},

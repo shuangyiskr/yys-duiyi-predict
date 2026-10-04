@@ -141,18 +141,18 @@ def build(match, ai_snapshot, catalog, official, soul_snapshot, duel_rules,
         has_target_conflict = bool(target_observation and candidate and any(
             "随机敌方" in (rule.get("target_rule") or rule.get("condition") or "")
             for rule in candidate.get("rules", [])))
-        website = official_cards(official.get("heroes", {}).get(name))
+        skill_text = official_cards(official.get("heroes", {}).get(name))
         wiki_skill_cards = {}
         unmatched_wiki_skills = []
-        if website:
+        if skill_text:
             wiki_hero = wiki_skill_glossary.get("heroes", {}).get(name, {})
-            for card in website["cards"]:
+            for card in skill_text["cards"]:
                 matches = wiki_hero.get(card["name"], [])
                 if len(matches) == 1:
                     wiki_skill_cards[card["name"]] = matches[0]
                 elif card.get("effect_tip_ids"):
                     unmatched_wiki_skills.append(card["name"])
-        skill_records[name] = {"client_verified": verified, "netease_website_text": website,
+        skill_records[name] = {"client_verified": verified, "skill_text_record": skill_text,
                                "wiki_skill_effect_expansions": wiki_skill_cards,
                                "wiki_skill_expansions_source": wiki_skill_glossary.get("source_url"),
                                "wiki_skill_expansions_revision_utc": wiki_skill_glossary.get("source_revision_utc"),
@@ -162,9 +162,9 @@ def build(match, ai_snapshot, catalog, official, soul_snapshot, duel_rules,
                                "text_matches_client_by_user": skill_text_user_confirmed,
                                "community_ai_operational_default_by_user": ai_default_user_confirmed,
                                "ai_conflict": "user_observation_vs_community_random_target" if has_target_conflict else "unassessed"}
-        if not verified and (not website or not website["cards"]):
+        if not verified and (not skill_text or not skill_text["cards"]):
             missing.append(f"No skill record: {name}")
-        if not verified and website and not skill_text_user_confirmed:
+        if not verified and skill_text and not skill_text_user_confirmed:
             evidence_gaps.append(f"{name}: official website text has no confirmed client version")
         if not candidate or not candidate.get("rules"):
             evidence_gaps.append(f"{name}: no documented auto-battle AI rule")
@@ -196,7 +196,7 @@ def build(match, ai_snapshot, catalog, official, soul_snapshot, duel_rules,
         if not verified and not soul_text_user_confirmed:
             evidence_gaps.append(f"{name}: no confirmed current client soul text")
     return {
-        "schema_version": 2,
+        "schema_version": 3,
         "run_id": match["run_id"],
         "source_screenshots": {side: str(Path(screenshots[side]).resolve()) for side in ("red", "blue")},
         "match_version": match.get("game_version", "unverified"),

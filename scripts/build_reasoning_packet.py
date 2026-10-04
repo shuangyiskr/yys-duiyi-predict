@@ -35,13 +35,13 @@ def opening_constraints(bundle):
 
 
 def build(bundle):
-    if bundle.get("schema_version") != 2 or not bundle.get("run_id"):
-        raise ValueError("expected a current schema_version=2 inference bundle")
+    if bundle.get("schema_version") != 3 or not bundle.get("run_id"):
+        raise ValueError("expected a current schema_version=3 inference bundle")
     compact_skills = {}
     for name, record in bundle["skills_and_ai"].items():
-        website = record.get("netease_website_text") or {}
+        skill_text = record.get("skill_text_record") or {}
         cards = []
-        for card in website.get("cards", []):
+        for card in skill_text.get("cards", []):
             extra = card.get("other_api_fields") or {}
             cards.append({
                 "skill_id": card["skill_id"], "name": card["name"], "awake": card.get("awake"),
@@ -55,8 +55,8 @@ def build(bundle):
                 "wiki_effect_expansion": record.get("wiki_skill_effect_expansions", {}).get(card["name"])
             })
         compact_skills[name] = {
-            "hero_id": website.get("hero_id"), "awakening": website.get("awakening"),
-            "official_source_requests": website.get("source_requests"),
+            "hero_id": skill_text.get("hero_id"), "awakening": skill_text.get("awakening"),
+            "official_source_requests": skill_text.get("source_requests"),
             "client_verified": record.get("client_verified"),
             "wiki_skill_expansions_source": record.get("wiki_skill_expansions_source"),
             "wiki_skill_expansions_revision_utc": record.get("wiki_skill_expansions_revision_utc"),

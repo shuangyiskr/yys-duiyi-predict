@@ -26,7 +26,7 @@ def main():
         ] for side, members in names.items()
     }
     skill_records = {
-        name: {"netease_website_text": {"hero_id": f"demo-{name}",
+        name: {"skill_text_record": {"hero_id": f"demo-{name}",
                                        "cards": [{"skill_id": "demo-basic", "name": "示例普攻",
                                                   "awake": 1, "cost": 0,
                                                   "base_description": "虚构：造成固定伤害。",
@@ -38,7 +38,7 @@ def main():
         for members in names.values() for name in members
     }
     bundle = {
-        "schema_version": 2, "run_id": "fictional-demo-only",
+        "schema_version": 3, "run_id": "fictional-demo-only",
         "teams": teams, "skills_and_ai": skill_records,
         "souls": {"示例御魂": {"web_candidate": {"mechanics": {
             "set2": "虚构：攻击增加。", "set4": "虚构：生命增加。"}},
