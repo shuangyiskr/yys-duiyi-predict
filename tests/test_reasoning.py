@@ -94,7 +94,7 @@ class GuardrailTests(unittest.TestCase):
             worker["key_actions"][0]["skill_id"] = "made-up"
         result = aggregate(self.ballot, workers, self.packet)
         self.assertEqual(result["outcome"], "undecided")
-        self.assertEqual(result["decision_reason"], "insufficient_independent_support")
+        self.assertEqual(result["decision_reason"], "insufficient_weighted_support")
         self.assertEqual(result["ballot_counts"]["abstain"], 5)
         self.assertEqual(len(result["invalid_workers"]), 5)
 
@@ -128,6 +128,55 @@ class GuardrailTests(unittest.TestCase):
         self.assertEqual(result["outcome"], "undecided")
         self.assertEqual(result["decision_reason"], "insufficient_directional_consensus")
         self.assertTrue(result["requires_master_review"])
+
+    def test_stronger_models_can_tip_a_close_directional_vote(self):
+        workers = self.workers()
+        workers[2]["choice"] = "blue"
+        workers[3]["choice"] = "blue"
+        workers[4].update(choice="abstain", key_actions=[])
+        self.assertEqual(aggregate(self.ballot, workers, self.packet)["outcome"], "undecided")
+        tiers = {"model_tiers": {"master-model": "strong",
+                                 "worker-model-1": "strong",
+                                 "worker-model-2": "strong"}}
+        result = aggregate(self.ballot, workers, self.packet, weight_config=tiers)
+        self.assertEqual(result["outcome"], "red")
+        self.assertEqual(result["weighted_counts"], {"red": 4.5, "blue": 2.0, "abstain": 1.0})
+        self.assertEqual(result["weighted_support_share"], 0.6)
+
+    def test_one_strong_model_does_not_override_many_base_models(self):
+        workers = self.workers()
+        for worker in workers:
+            worker["choice"] = "blue"
+        tiers = {"model_tiers": {"master-model": "strong"}}
+        result = aggregate(self.ballot, workers, self.packet, weight_config=tiers)
+        self.assertEqual(result["outcome"], "blue")
+        self.assertEqual(result["independent_groups"][0]["weight"], 1.5)
+        self.assertEqual(result["weighted_counts"]["blue"], 5.0)
+
+    def test_weight_config_must_use_bounded_tiers(self):
+        workers = self.workers()
+        for config in ({"model_tiers": {"master-model": 100}},
+                       {"model_tiers": {"master-model": "elite"}},
+                       {"model_tiers": {"master-model": "strong"}, "extra": True}):
+            with self.subTest(config=config), self.assertRaises(ValueError):
+                aggregate(self.ballot, workers, self.packet, weight_config=config)
+
+    def test_same_family_counts_as_one_source(self):
+        workers = self.workers()
+        config = {"model_tiers": {"worker-model-1": "strong", "worker-model-2": "medium"},
+                  "model_families": {"worker-model-1": "same-series",
+                                     "worker-model-2": "same-series"}}
+        result = aggregate(self.ballot, workers, self.packet, weight_config=config)
+        self.assertEqual(len(result["independent_groups"]), 5)
+        family = next(group for group in result["independent_groups"]
+                      if group["model"] == "family:same-series")
+        self.assertEqual(family["weight"], 1.5)
+        self.assertEqual(len(family["models"]), 2)
+        workers[1]["choice"] = "blue"
+        conflicted = aggregate(self.ballot, workers, self.packet, weight_config=config)
+        family = next(group for group in conflicted["independent_groups"]
+                      if group["model"] == "family:same-series")
+        self.assertEqual(family["choice"], "abstain")
 
     def test_master_abstention_does_not_veto_worker_consensus(self):
         master = {**self.ballot, "choice": "abstain", "key_actions": []}

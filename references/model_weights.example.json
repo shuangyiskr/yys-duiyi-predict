@@ -1,0 +1,11 @@
+{
+  "model_tiers": {
+    "YOUR_STRONG_MODEL": "strong",
+    "YOUR_MEDIUM_MODEL": "medium",
+    "YOUR_BASE_MODEL": "base"
+  },
+  "model_families": {
+    "YOUR_STRONG_MODEL": "provider_a_series",
+    "ANOTHER_MODEL_FROM_SAME_SERIES": "provider_a_series"
+  }
+}

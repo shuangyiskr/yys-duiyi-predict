@@ -109,14 +109,14 @@ my-data/
 
 使用 `references/panel_config.example.json` 配置自己的模型服务，密钥放在本地环境变量。脚本会把完整 `reasoning_packet.json` 发送给配置的服务，其中可能包含你导入的资料文案和本局面板；使用前请确认这些资料可以外发，外部服务也可能收费。它不直接上传截图。
 
-先由主智能体独立保存包含实际 `model` 标识的 `master_ballot.json`，再运行：
+先由主智能体独立保存包含实际 `model` 标识的 `master_ballot.json`。将 `references/model_weights.example.json` 复制为本地 `model_weights.json`，按模型实际标识预先指定 `strong`、`medium`、`base` 档；未列出的模型按基础档计算。可选的 `model_families` 把已知同系列模型合并为一个来源，只取其中最高档权重，意见冲突则该来源弃权。档位是待实测校准的能力先验，不由模型自己在票据中填写。然后运行：
 
 ```powershell
 .\.venv\Scripts\python scripts/run_independent_panel.py runs/本轮目录/reasoning_packet.json panel_config.json --master-ballot master_ballot.json --out-dir ballots
-.\.venv\Scripts\python scripts/aggregate_votes.py master_ballot.json ballots --packet runs/本轮目录/reasoning_packet.json --out result.json
+.\.venv\Scripts\python scripts/aggregate_votes.py master_ballot.json ballots --packet runs/本轮目录/reasoning_packet.json --weight-config model_weights.json --out result.json
 ```
 
-如有 `evidence_gaps`，需按[票据格式](references/schema.md)记录 `gap_review.json`，并在聚合命令中加 `--gap-review gap_review.json`。同名模型重复运行只算一组；自动给方向须至少四组，胜方获得全部组至少三分之二支持，且获得定向组至少四分之三支持。这些门槛尚未经历史对局校准，票数不代表胜率。
+如有 `evidence_gaps`，需按[票据格式](references/schema.md)记录 `gap_review.json`，并在聚合命令中加 `--gap-review gap_review.json`。同名模型重复运行只算一组；各档权重为基础 1.0、中等 1.2、强 1.5。自动给方向须至少四组，胜方获得全部权重至少 60%，且获得定向权重严格超过三分之二。不使用权重配置时，删除命令中的 `--weight-config model_weights.json`，全部模型会按基础档计算。这些权重与门槛尚未经历史对局校准，计票份额不代表胜率。
 
 ## 参与改进
 
