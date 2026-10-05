@@ -132,4 +132,4 @@ my-data/
 
 ## 项目说明
 
-代码采用 [MIT 许可](LICENSE)。游戏资料的权利边界见 [第三方内容说明](THIRD_PARTY_NOTICES.md)；维护者打包步骤见 [发布文档](docs/releasing.md)。
+代码采用 [MIT 许可](LICENSE)。游戏资料的权利边界见 [第三方内容说明](THIRD_PARTY_NOTICES.md)。

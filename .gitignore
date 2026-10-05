@@ -1,4 +1,4 @@
-# Downloaded third-party text and game imagery stay on the user's machine.
+# Local reference data and image assets.
 /references/official_skills_snapshot.json
 /references/community_soul_snapshot.json
 /references/community_ai_snapshot.json
