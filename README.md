@@ -1,65 +1,67 @@
-# 阴阳师对弈竞猜预测 Skill
+<h1 align="center">阴阳师对弈竞猜预测 Skill</h1>
+<p align="center"><strong>让 AI 先读对这一局，再认真推演胜负。</strong></p>
+<p align="center">从红蓝阵容截图出发，核对面板、御魂与机制资料，追踪自动战斗的关键分支。</p>
+<p align="center">
+  <a href="#快速开始">快速开始</a> ·
+  <a href="#项目亮点">项目亮点</a> ·
+  <a href="#资料准备">资料准备</a> ·
+  <a href="#参与改进">参与改进</a>
+</p>
+<p align="center">
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-2d6a4f"></a>
+  <img alt="Python: 3.11" src="https://img.shields.io/badge/Python-3.11-3776ab">
+  <img alt="Status: open source" src="https://img.shields.io/badge/Status-open%20source-7952b3">
+</p>
 
-> 两张阵容图，先把输入读对，再谈输赢。
+---
 
-这是一个面向《阴阳师》对弈竞猜的非官方开源 Skill。直接让 AI 看图猜胜负，容易认错御魂、漏读技能升级，或把自动战斗当成人工操作。本项目先核对本轮输入和机制资料，再沿着行动、鬼火、技能与目标选择推演，让结论可以回看依据。
+直接让 AI 看两张图选红蓝，最容易出错的地方往往发生在推演之前：式神名字和御魂图案认错、面板漏读、技能升级没合并，或者把自动战斗当成玩家手动操作。本项目把这些信息整理成**可核对的本局输入包**，再要求推演给出行动、鬼火、目标与依据。它是《阴阳师》的非官方开源项目，不承诺每局都能预测成功。
 
-## 一局如何推演
+## 项目亮点
 
-| 阶段 | Skill 做什么 | 你会看到 |
-| --- | --- | --- |
-| 读截图 | 核对十名式神、八项面板和十个御魂图案 | 识别结果与待确认项 |
-| 查机制 | 检查本局技能、御魂效果和自动战斗规则 | 资料缺口与冲突 |
-| 推演 | 追踪关键行动、鬼火和目标选择 | 条件结论、分支或弃权原因 |
+| 截图输入 | 机制输入 | 推演输出 |
+| :--- | :--- | :--- |
+| 从手机、平板或模拟器截图定位阵容表，读取十名式神和八项面板 | 对照本地导入的技能、御魂效果与自动战斗规则，列出缺口 | 追踪关键出手、鬼火与目标选择，说明结论依赖哪些条件 |
+| 不要求整张截图有固定宽高比；低置信度结果进入核对 | 资料可在后续轮次复用；版本和来源需核实 | 遇到随机目标、冲突资料或关键未知项时保留分支 |
 
-截图定位依据阵容表内容，不要求整张图片具有固定比例；已用手机、平板和模拟器截图验证。低置信度的名字和图案需要核对，随机目标或未知结算顺序会保留分支。需要时，也可以让多个模型独立分析同一份输入包。
+**设计重点：**输入核验、可追溯的推演过程，以及在证据不足时明确指出卡在哪里。可选用多个模型独立阅读同一份推演包，再汇总票据；票数不等于胜率。
 
 > 首次使用时，可以让你的 AI 智能体协助整理和导入资料；来源、使用权限及当前版本需要你确认。准备好后，后续每轮可以复用。
 
-## 先看它怎样检查推演
+## 快速开始
 
-仓库自带一个完全虚构的例子，不需要游戏资料或 OCR 依赖：
-
-```powershell
-python examples/synthetic_demo.py
-```
-
-它会构造推演包和票据，验证一笔正确的鬼火账，并拦下故意写错的结算。例如票据声称“行动前 4 火、技能耗 0 火、没有回火，行动后却有 5 火”，校验器会拒绝这张票。因没有真实对局资料，演示最后会弃权。输出中的关键结果是：
-
-```json
-{"ballot_valid": true, "invalid_fire_ballot_blocked": true, "prediction": "abstain"}
-```
-
-这个例子展示如何检查推演过程，不是一次真实对局预测；真实对局还需要本轮截图和机制资料。
-
-## 安装与首次使用
-
-将整个仓库放进支持 `SKILL.md` 的智能体 skills 目录。Codex 用户可在 PowerShell 中运行：
+把整个仓库放进支持 `SKILL.md` 的智能体技能目录。Codex 用户可以在 PowerShell 中运行：
 
 ```powershell
 git clone https://github.com/shuangyiskr/yys-duiyi-predict.git "$env:USERPROFILE\.agents\skills\yys-duiyi-predict"
 cd "$env:USERPROFILE\.agents\skills\yys-duiyi-predict"
-```
-
-需要保留 `SKILL.md`、`scripts/` 和 `references/`；只复制 `SKILL.md` 无法运行脚本。若安装后 Codex 未显示该 Skill，重启 Codex。其他智能体请按各自的技能目录约定安装。已在 Windows + Python 3.11 验证。
-
-```powershell
 python -m venv .venv
 .\.venv\Scripts\python -m pip install -r requirements.txt
 .\.venv\Scripts\python scripts/bootstrap_data.py
 ```
 
-最后一条建立本地资料槽并报告覆盖度；零条目表示资料尚未准备。仓库不随附游戏技能文案、御魂图片和自动战斗资料。
+最后一条建立本地资料槽并报告覆盖度；`0` 表示相应资料尚未准备。请保留整个仓库，单独复制 `SKILL.md` 无法运行脚本。其他智能体按其技能目录约定安装。项目已在 Windows 与 Python 3.11 下验证。
 
-安装后，把红蓝双方阵容详情截图交给智能体，例如：
+安装后，把红蓝双方的**阵容详情截图**交给智能体：
 
 > 使用 `$yys-duiyi-predict` 分析本轮对弈竞猜。红方截图在 `C:\path\to\red.png`，蓝方截图在 `C:\path\to\blue.png`。请先核对截图和本局资料，补齐可用资料，再推演；不能核实的地方请列出来。
 
-也可以直接描述任务，让支持该 Skill 的智能体自行选择。第一次准备资料和核对御魂通常需要更多时间，后续轮次可复用已确认的本地资料。
+支持自动选择 Skill 的智能体也可以直接接收这段任务描述。第一次准备资料、核对御魂通常更费时；后续轮次可复用已确认的本地资料。
 
-## 导入本地资料
+<details>
+<summary><strong>想先看一个不依赖游戏资料的演示？</strong></summary>
 
-资料可整理为以下目录，然后本地导入：
+```powershell
+python examples/synthetic_demo.py
+```
+
+演示用虚构数据验证一笔正确的鬼火账，并拦下故意写错的票据。它展示推演校验方式，不是真实对局预测；最终输出 `prediction: abstain`。
+
+</details>
+
+## 资料准备
+
+仓库提供数据接口与导入工具，不随附游戏技能文案、御魂图片或自动战斗资料。资料可以分批整理到本地目录：
 
 ```text
 my-data/
@@ -73,31 +75,27 @@ my-data/
       御魂名.png
 ```
 
-文件名是现有程序的数据接口名称，不指定资料来源。四个 JSON 的顶层必须分别含 `heroes`、`souls`、`heroes`、`heroes` 对象；头像必须是 80×80 PNG，名称与御魂名相同。具体字段见 [数据约定](references/schema.md)。资料可以分批导入：
+这些文件名是程序接口名称，不指定资料来源。四个 JSON 的顶层依次需要 `heroes`、`souls`、`heroes`、`heroes` 对象；头像是与对弈面板对应的 80×80 PNG。字段见[数据约定](references/schema.md)。导入命令：
 
 ```powershell
 .\.venv\Scripts\python scripts/bootstrap_data.py --source-dir C:\path\to\my-data
 ```
 
-导入器只读本地文件，检查 JSON 基本结构与 PNG 尺寸；已有不同内容时会拒绝覆盖，需要用户明确加 `--replace`。更新资料后，先重新检查覆盖度，再确认当前文案是否适用于客户端。没有头像时仍可读取截图和生成核对页，但御魂名称需逐项人工确认。
-
-## 确认本地规则
-
-若您确认当前竞猜为满级觉醒、技能满级、双方各 4 火、正常 3/4/5 回火且无阴阳师参战，执行：
+导入器检查基本结构与图片尺寸，已有不同内容时拒绝覆盖；明确需要替换时再加 `--replace`。没有头像也可以生成截图核对页，但御魂名称须逐项确认。确认当前竞猜符合标准模式后，可运行：
 
 ```powershell
 .\.venv\Scripts\python scripts/confirm_local_rules.py --accept-standard-duel-mode
 ```
 
-`--accept-skill-text`、`--accept-soul-text`、`--accept-community-ai` 分别表示使用者已核实导入的对应资料。确认与资料指纹绑定，内容变化后须重核。确认标记不等于程序独立核验了资料真实性。
+该选项表示你确认满级觉醒、技能满级、双方各 4 火、正常 3/4/5 回火、无阴阳师参战。`--accept-skill-text`、`--accept-soul-text`、`--accept-community-ai` 分别用于确认已核实的本地资料，确认与内容指纹绑定；工具不会独立证明资料与当前客户端一致。
 
-## 读取与推演
+## 一轮推演怎样运行
 
 ```powershell
 .\.venv\Scripts\python scripts/start_match.py 红方.png 蓝方.png --runs-dir runs
 ```
 
-它根据截图中的表格行名和五列数值定位，不限制整张截图的宽高比例；表格不清晰或无法定位时会要求核对。它生成本轮 `match.json` 和 `soul_review.html`。先核对十名式神、八项面板和十个御魂；未确认项修正 `match.json`，保留原图坐标 `soul_crop_box` 和图案指纹，随后执行：
+读取器根据表格行名与五列数值定位，不限制整张图的宽高比例。它生成 `match.json` 和 `soul_review.html`。核对十名式神、八项面板与十个御魂图案；修正待确认项时保留原图裁图坐标和图案指纹。随后运行：
 
 ```powershell
 .\.venv\Scripts\python scripts/verify_match.py runs/本轮目录/match.json --intake-only
@@ -105,31 +103,23 @@ my-data/
 .\.venv\Scripts\python scripts/build_reasoning_packet.py runs/本轮目录/bundle.json --out runs/本轮目录/reasoning_packet.json
 ```
 
-`missing` 非空时不得给确定性竞猜。`evidence_gaps` 要逐项判断是否影响胜负。推演智能体读本轮 `reasoning_packet.json`，不得套用历史场次；规则见 [SKILL.md](SKILL.md) 和 [推演工作表](references/inference_workflow.md)。
+智能体使用本轮 `reasoning_packet.json` 推演。`missing` 非空时不做确定性竞猜；`evidence_gaps` 需判断是否会改变本局结论。完整执行规则在 [SKILL.md](SKILL.md)、[推演工作表](references/inference_workflow.md)和[战斗协议](references/battle_protocol.md)。
 
 ## 可选：多模型复核
 
-配置示例见 `references/panel_config.example.json`，密钥只放本地环境变量。运行 `run_independent_panel.py` 会把完整的 `reasoning_packet.json` 发送给所配置的五个模型服务；其中可能包含使用者导入的技能、御魂、AI 文案和本轮面板数据。请先确认资料允许传给这些服务。外部模型调用可能产生费用。
+使用 `references/panel_config.example.json` 配置自己的模型服务，密钥放在本地环境变量。脚本会把完整 `reasoning_packet.json` 发送给配置的服务，其中可能包含你导入的资料文案和本局面板；使用前请确认这些资料可以外发，外部服务也可能收费。它不直接上传截图。
 
-脚本只接受 HTTPS 地址，拒绝 URL 内的账号密码和服务重定向；请自行配置可信服务。它不会直接上传本地截图。单模型本地推演和 `bootstrap_data.py` 不会因安装而自动调用模型服务。
-
-如需多模型推演，先按 [票据格式](references/schema.md)让主智能体独立保存 `master_ballot.json`，其中须有实际 `model` 标识；将配置示例复制为本地 `panel_config.json` 并填入自己的模型服务配置与密钥环境变量。然后运行：
+先由主智能体独立保存包含实际 `model` 标识的 `master_ballot.json`，再运行：
 
 ```powershell
 .\.venv\Scripts\python scripts/run_independent_panel.py runs/本轮目录/reasoning_packet.json panel_config.json --master-ballot master_ballot.json --out-dir ballots
 .\.venv\Scripts\python scripts/aggregate_votes.py master_ballot.json ballots --packet runs/本轮目录/reasoning_packet.json --out result.json
 ```
 
-若推演包含 `evidence_gaps`，还需按 [数据约定](references/schema.md)逐项写出本轮 `gap_review.json`，在第二条命令中添加 `--gap-review gap_review.json`；否则聚合结果会保持 `undecided`。
+如有 `evidence_gaps`，需按[票据格式](references/schema.md)记录 `gap_review.json`，并在聚合命令中加 `--gap-review gap_review.json`。同名模型重复运行只算一组；自动给方向须至少四组，胜方获得全部组至少三分之二支持，且获得定向组至少四分之三支持。这些门槛尚未经历史对局校准，票数不代表胜率。
 
-聚合规则：
+## 参与改进
 
-- 每张票写实际 `model` 标识；缺失标识时不自动给方向。同名模型重复运行只算一个来源，不同标识也不能证明判断彼此独立。
-- 自动方向须至少四个不同标识，胜方获得全部标识至少三分之二支持，且获得定向标识至少四分之三支持；弃权计入全部标识。
-- 有 `evidence_gaps` 时，须逐项记录其对本局的影响；未复核或可能翻转结果时输出 `undecided`。
+这个项目仍有值得验证的机制输入问题。我们把**已由当前实现证实的缺口**、官方更新举例与可提交的改进方式放在 [CONTRIBUTING.md](CONTRIBUTING.md)。欢迎提供可复现的对局、适用玩法与版本证据，或改进数据模型和推演校验。一个具体反例，比一份泛泛的机制清单更有帮助。
 
-这些门槛未经历史对局校准，票数不等于胜率。完整格式见 [数据约定](references/schema.md)。
-
-## 项目说明
-
-代码采用 [MIT 许可](LICENSE)。游戏资料的权利边界见 [第三方内容说明](THIRD_PARTY_NOTICES.md)。
+代码采用 [MIT 许可](LICENSE)；游戏资料相关说明见[第三方内容说明](THIRD_PARTY_NOTICES.md)。
